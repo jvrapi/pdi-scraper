@@ -1,9 +1,14 @@
 import Sequelize, { Model } from 'sequelize';
 import { cardsConnection } from '../databases';
-import { Color } from './color';
-import { Format } from './format';
 import { Set } from './set';
-import { Version } from './version';
+
+
+
+
+interface Format {
+  format: string,
+  isLegal: boolean
+}
 
 
 interface CardProps {
@@ -28,9 +33,9 @@ interface CardProps {
   isVariant: boolean | null;
   isFoundInBooster: boolean | null;
   isStorySpotlight: boolean | null;
-  colors: Color[];
-  formats: Format[];
-  versions: Version[];
+  colors: String[];
+  formats: String[];
+  versions: String[];
   id: string
 }
 
@@ -57,9 +62,9 @@ export class Card extends Model<CardProps> implements CardProps{
   isVariant: boolean | null;
   isFoundInBooster: boolean | null;
   isStorySpotlight: boolean | null;
-  colors: Color[];
-  formats: Format[];
-  versions: Version[];
+  colors: String[];
+  formats: String[];
+  versions: String[];
   id: string;
   faceOfId: string
   faces: Card[]
@@ -128,3 +133,4 @@ Card.belongsTo(Card,{
     field: 'face_of_id',
   }
 })
+

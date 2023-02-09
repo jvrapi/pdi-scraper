@@ -19,21 +19,27 @@ export type FormatName =
   | 'oldschool'
   | 'premodern';
 
+
+export interface FormatProps {
+  format: FormatName,
+  isLegal: boolean
+}
+
 export class Format {
-  private readonly _format: FormatName;
+  private readonly props: FormatProps
 
-  private readonly _isLegal: boolean;
-
-  constructor(format: FormatName, isLegal?: boolean) {
-    this._format = format;
-    this._isLegal = isLegal ?? true;
+  constructor(props: FormatProps) {
+    this.props = {
+      ...props,
+      isLegal: props.isLegal ?? true
+    }
   }
 
   public get value() {
-    return this._format;
+    return this.props.format;
   }
 
   public get isLegal() {
-    return this._isLegal;
+    return this.props.isLegal;
   }
 }

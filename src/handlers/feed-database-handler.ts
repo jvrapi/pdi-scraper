@@ -1,15 +1,15 @@
-import 'dotenv/config'
-import { getAllCardsUseCase } from './api/use-cases/get-all-cards-use-case'
-import { getAllSetsUseCase } from './api/use-cases/get-all-sets-use-case'
-import './sequelize/databases'
-import { Card } from './sequelize/entities/card'
-import { Set } from './sequelize/entities/set'
+import '../sequelize/databases'
+import { randomUUID as uuid } from 'node:crypto';
+import { getAllCardsUseCase } from '../api/use-cases/get-all-cards-use-case'
+import { getAllSetsUseCase } from '../api/use-cases/get-all-sets-use-case'
+import { Card } from '../sequelize/entities/card'
+import { Set } from '../sequelize/entities/set'
 import * as fastq from "fastq";
 import type { queueAsPromised } from "fastq";
-import { logger } from './utils/logger'
-import { Loading } from './utils/loading'
-import { DownloadImagesProps, downloadImagesUseCase } from './use-cases/download-images-use-case'
-import { Image, ImageType } from './sequelize/entities/image'
+import { logger } from '../utils/logger'
+import { Loading } from '../utils/loading'
+import { DownloadImagesProps, downloadImagesUseCase } from '../use-cases/download-images-use-case'
+import { Image, ImageType } from '../sequelize/entities/image'
 
 async function main(){
  
@@ -30,9 +30,9 @@ async function main(){
   
   //-------------------------- INSERT SET AND CARDS DATA --------------------------
   async function insertDataWorker(set: Set){
-    
+    const setCards = cards
+    .filter(card => card.setId === set.id) // get cards of set to save in db
     await set.save() // Save set in db
-    const setCards = cards.filter(card => card.setId === set.id) // get cards of set to save in db
     await Promise.all(setCards.map(async card => await card.save())) // save all set cards in db       
   }
   const insertDataQueue: queueAsPromised<Set> = fastq.promise(insertDataWorker, 100)
@@ -74,9 +74,7 @@ async function main(){
   
   //-------------------------- LOGGERS --------------------------
   logger.success('Todas as informações inseridas com sucesso!')
-  
-  logger.warn('Verifique a pasta se a pasta "logs" foi criada. Caso isso aconteça, algum download falhou!')
-  
+   
   const cardsCount = await Card.count()
   
   const setsCount = await Set.count()

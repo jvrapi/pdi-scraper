@@ -213,7 +213,7 @@ function parseColors(colors?: Scry.Color[] | null){
     return [];
   }
 
-  return colors.map((color) => new Color(color));
+  return colors.map((color) => new Color(color)).map(color => color.value);
 }
 
 function parseFormats(legalities: Scry.Legalities){
@@ -222,9 +222,9 @@ function parseFormats(legalities: Scry.Legalities){
 
     cardFormats.forEach((format) => {
       const isLegal = legalities[format as keyof typeof Scry.Format] === 'legal';
-      formats.push(new Format(format as FormatName, isLegal));
+      formats.push(new Format({format: format as FormatName, isLegal}));
     });
-    return formats;
+    return formats.filter(format => format.isLegal).map(format => format.value);
 }
 
 function parseVersions(finishes: (keyof typeof Scry.CardFinish)[],
@@ -249,5 +249,5 @@ apiVersion: ApiVersion){
     }
   });
 
-  return versions;
+  return versions.map(version => version.value);
 }
