@@ -8,23 +8,21 @@ import * as fastq from "fastq";
 import type { queueAsPromised } from "fastq";
 import { logger } from '../utils/logger'
 import { Loading } from '../utils/loading'
-import { DownloadImagesProps, downloadImagesUseCase } from '../use-cases/download-images-use-case'
-import { Image, ImageType } from '../sequelize/entities/image'
-
 async function main(){
- 
   logger.success(`Script Iniciado 🔥`)
   logger.timer.start('script')
   
   //-------------------------- DELETE DATA --------------------------
   logger.warn(`Apagando registros nas tabelas` )  
   await Set.destroy({where: {}})
-  await Image.destroy({where:{}})
+  // await Image.destroy({where:{}})
 
   //-------------------------- GET DATA --------------------------
   logger.message('Buscando e instanciando as informações')
-  const { sets, images: setsImages } = await getAllSetsUseCase()
-  const { cards, images: cardsImages } = await getAllCardsUseCase()
+  logger.timer.start('Informações da API')
+  const { sets } = await getAllSetsUseCase()
+  const { cards } = await getAllCardsUseCase()
+  logger.timer.stop('Informações da API')
   logger.message(`Foram encontrados ${sets.length} coleções e ${cards.length} cartas`)
   
   
@@ -49,28 +47,8 @@ async function main(){
   Loading.stop(insertDataLoad)
   logger.timer.stop('Coleções e cartas')
 
-  //-------------------------- INSERT IMAGE DATA --------------------------
-  async function downloadImagesWorker(image: DownloadImagesProps){
-    // await downloadImagesUseCase(image);
-    await Image.create({
-      id: image.id,
-      type: ImageType[image.type],
-      path: image.uri
-    })
-  } 
-  const downloadImagesQueue: queueAsPromised<DownloadImagesProps> = fastq.promise(downloadImagesWorker, 100)
-  const allImages = [...setsImages, ...cardsImages]
-  const downloadImagesLoad = Loading.start()
-  logger.timer.start('Imagens')
-  await Promise.all(allImages.map(async image => {
-    try {
-      await downloadImagesQueue.push(image)
-    } catch (error) {
-      logger.error(error)
-    }
-  }))
-  Loading.stop(downloadImagesLoad)
-  logger.timer.stop('Imagens')
+
+
   
   //-------------------------- LOGGERS --------------------------
   logger.success('Todas as informações inseridas com sucesso!')
@@ -79,13 +57,11 @@ async function main(){
   
   const setsCount = await Set.count()
 
-  const imagesCount = await Image.count()
   
   logger.success(`${setsCount} coleções inseridas`)
   
   logger.success(`${cardsCount} cartas inseridas`)
 
-  logger.success(`${imagesCount} imagens inseridas`)
   
   logger.timer.stop('script')
 }

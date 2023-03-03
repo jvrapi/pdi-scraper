@@ -2,15 +2,6 @@ import Sequelize, { Model } from 'sequelize';
 import { cardsConnection } from '../databases';
 import { Set } from './set';
 
-
-
-
-interface Format {
-  format: string,
-  isLegal: boolean
-}
-
-
 interface CardProps {
   setId: string;
   name: string;
@@ -37,6 +28,7 @@ interface CardProps {
   formats: String[];
   versions: String[];
   id: string
+  imageUri: string | null
 }
 
 
@@ -70,6 +62,7 @@ export class Card extends Model<CardProps> implements CardProps{
   faces: Card[]
   faceOf: Card
   collection: Set
+  imageUri: string | null;
 }
 
 Card.init({
@@ -110,7 +103,11 @@ Card.init({
   isStorySpotlight: Sequelize.BOOLEAN,
   colors: Sequelize.JSON,
   formats: Sequelize.JSON,
-  versions: Sequelize.JSON
+  versions: Sequelize.JSON,
+  imageUri: {
+    type: Sequelize.STRING,
+    allowNull: true
+  }
 },
   {
     sequelize: cardsConnection,

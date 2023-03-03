@@ -43,25 +43,13 @@ export async function getAllCardsUseCase() {
     defaultCards?.on('error', reject)
   })
 
-  const cardsImages: DownloadImagesProps[] = []
   const faces: Card[] = []
   const sequelizeCards: Card[] = []
 
 
   cards.forEach(card => {
     const cardId = uuid()
-    const imageUri = getImageUri(card)
-    if(imageUri) {
-      cardsImages.push({
-        fileType: 'png',
-        id: cardId,
-        path: card.set,
-        type: 'cards',
-        uri: imageUri
-      })
-    }
     if (card.card_faces && card.card_faces?.length > 0) {
-
       // These filters is necessary because api returns cards with same name in card_faces field.
       card.card_faces
         .filter(
@@ -78,8 +66,10 @@ export async function getAllCardsUseCase() {
           return cardFace; // will return any card if it is not multifaceted
         })
         .forEach(cardFace => { // build sequelize Card Object
+          
           const face = Card.build({
             id: uuid(),
+            imageUri: cardFace.image_uris ? cardFace.image_uris.png : null,
             name: cardFace.name,
             manaCost: cardFace.mana_cost ?? null,
             borderColor: null,
@@ -111,6 +101,7 @@ export async function getAllCardsUseCase() {
     }
     const sequelizeCard =  Card.build({
       id: cardId,
+      imageUri: card.image_uris?.png,
       name: chooseBestName(card),
       manaCost: card.mana_cost ?? null,
       borderColor: card.border_color,
@@ -146,7 +137,6 @@ export async function getAllCardsUseCase() {
 
  return {
   cards: [...sequelizeCards, ...faces],
-  images: cardsImages
  }
     
 }
@@ -185,7 +175,6 @@ function chooseBestTypeLine(card: Scry.Card) {
     ) {
       const [cardName1] = cardTypeLineAsArray;
       typeLine = cardName1;
-      // applicationCard.imageUri = card.getImageURI('png');
     }
 
     return typeLine;
@@ -193,20 +182,6 @@ function chooseBestTypeLine(card: Scry.Card) {
   return null;
 }
 
-function getImageUri(card: Scry.Card) {
-  const cardNameAsArray = card.name.split('//').map((name) => name.trim());
-
-  if (
-    cardNameAsArray.length === 2 &&
-    cardNameAsArray[0] === cardNameAsArray[1]
-  ) {
-    return card.card_faces[0].image_uris
-      ? card.card_faces[0].image_uris.png
-      : null;
-  }
-
-  return card.image_uris ? card.image_uris.png : null;
-}
 
 function parseColors(colors?: Scry.Color[] | null){
   if (!colors) {

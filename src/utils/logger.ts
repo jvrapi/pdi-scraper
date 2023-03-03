@@ -30,8 +30,8 @@ export const logger = {
     write: (message: string) => createLogFile(message)
   },
   timer: {
-    start: (label: string) => time(chalk.green.bold(`✔️ ${label}`)),
-    stop: (label: string) => timeEnd(chalk.green.bold(`✔️ ${label}`))
+    start: (label: string) => time(chalk.green.bold(label)),
+    stop: (label: string) => timeEnd(chalk.green.bold(label))
   }
 
 };

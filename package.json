@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "feed": "tsx src/handlers/feed-database-handler.ts",
-    "recreate": "tsx src/handlers/recreate-ids-handler.ts"
+    "recreate": "tsx src/handlers/recreate-ids-handler.ts",
+    "start": "yarn feed && yarn recreate"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",

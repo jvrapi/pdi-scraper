@@ -11,6 +11,7 @@ export interface SetsProps {
   isDigital: boolean;
   isFoilOnly: boolean;
   id: string
+  iconUri: string | null
 }
 
 
@@ -22,6 +23,7 @@ export class Set extends Model<SetsProps> implements SetsProps{
   isDigital: boolean;
   isFoilOnly: boolean;
   id: string;
+  iconUri: string | null
 }
 
 
@@ -54,7 +56,8 @@ Set.init({
   isFoilOnly: {
     type: Sequelize.BOOLEAN,
     allowNull: false
-  }
+  },
+  iconUri: Sequelize.STRING
 }, {
   sequelize: cardsConnection,
   underscored: true,
