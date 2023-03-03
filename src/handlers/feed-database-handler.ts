@@ -1,5 +1,4 @@
 import '../sequelize/databases'
-import { randomUUID as uuid } from 'node:crypto';
 import { getAllCardsUseCase } from '../api/use-cases/get-all-cards-use-case'
 import { getAllSetsUseCase } from '../api/use-cases/get-all-sets-use-case'
 import { Card } from '../sequelize/entities/card'
@@ -15,7 +14,6 @@ async function main(){
   //-------------------------- DELETE DATA --------------------------
   logger.warn(`Apagando registros nas tabelas` )  
   await Set.destroy({where: {}})
-  // await Image.destroy({where:{}})
 
   //-------------------------- GET DATA --------------------------
   logger.message('Buscando e instanciando as informações')
