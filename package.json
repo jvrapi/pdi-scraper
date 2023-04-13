@@ -4,9 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "feed": "tsx src/handlers/feed-database-handler.ts",
-    "recreate": "tsx src/handlers/recreate-ids-handler.ts",
-    "start": "yarn feed && yarn recreate"
+    "start": "tsx src/handlers/feed-database-handler.ts"
   },
   "devDependencies": {
     "@types/node": "^18.11.18",

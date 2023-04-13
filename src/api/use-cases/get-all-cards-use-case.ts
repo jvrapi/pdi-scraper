@@ -48,7 +48,7 @@ export async function getAllCardsUseCase() {
 
 
   cards.forEach(card => {
-    const cardId = uuid()
+    const cardId = card.id
     if (card.card_faces && card.card_faces?.length > 0) {
       // These filters is necessary because api returns cards with same name in card_faces field.
       card.card_faces
